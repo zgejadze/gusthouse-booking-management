@@ -1,9 +1,23 @@
 const searchBtn = document.getElementById("search-btn");
 const formFieldSectionElement = document.getElementById("form-field");
 
+function goToLandingPage(event){
+    event.target.remove()
+    formFieldSectionElement.innerHTML = ''
+    clickedSearch = false
+    searchBtn.nextElementSibling.style.display = 'inline-block'
+
+}
+
+let clickedSearch;
 function loadSearchView() {
-  formFieldSectionElement.innerHTML = `
-  <form>
+    if(clickedSearch){
+        return
+    }
+    
+    clickedSearch = true
+    searchBtn.nextElementSibling.style.display = 'none'
+  formFieldSectionElement.innerHTML = `<form>
     <p>
         <label for="room-number">ოთახის ნომერი</label>
         <select name="room-number" id="room-number">
@@ -19,9 +33,16 @@ function loadSearchView() {
 
     </p>
 
-    </form>
-`;
-    
+    </form>`;
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "უკან";
+  backBtn.id = 'back-btn'
+  console.log(searchBtn.parentElement);
+  searchBtn.parentElement.appendChild(backBtn);
+  backBtn.addEventListener('click', goToLandingPage)
+  
 }
+
+
 
 searchBtn.addEventListener("click", loadSearchView);
