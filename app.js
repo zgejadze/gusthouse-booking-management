@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const db = require('./data/database');
 
 const app = express();
 const baseRoutes = require('./router/routes')
@@ -19,4 +20,12 @@ if (process.env.PORT) {
 }
 
 
-app.listen(port);
+db.connectToDatabase()
+  .then(function () {
+    app.listen(port);
+  })
+  .catch(function (error) {
+    console.log('Failed to connect to the database!');
+    console.log(error);
+  });
+
