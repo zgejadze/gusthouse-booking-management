@@ -90,6 +90,10 @@ function loadBookingForm() {
   clickedBooking = true
   formFieldSectionElement.innerHTML = `<form>
   <p>
+  <label for="booking-name">ჯავშნის დასახელება</label>
+  <input type="text" id="booking-name" name="booking-name" maxlength="60" />
+  </p>
+  <p>
     <label for="booking-source">ჯავშნის წყარო</label>
     <select name="booking-source" id="booking-source">
       <option value="facebook">Facebook</option>
@@ -100,10 +104,7 @@ function loadBookingForm() {
     </select>
   </p>
   <p>
-    <label for="booking-name">ჯავშნის დასახელება</label>
-    <input type="text" id="booking-name" name="booking-name" maxlength="60" />
-  </p>
-  <p>
+    <label for="room-number">ოთახის ნომერი</label>
     <select name="room-number" id="room-number">
       
     </select>
