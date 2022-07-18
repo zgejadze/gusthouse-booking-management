@@ -19,39 +19,22 @@ const roomNumbers = [
   "3-4",
 ];
 
-
 ////////////// back button ///////////////////
 function goToLandingPage(event) {
   event.target.remove();
   formFieldSectionElement.innerHTML = "";
-  clickedSearch = false;
-  clickedBooking = false;
   resultFieldElement.innerHTML = "";
-  searchBtn.style.display = 'inline-block'
+  searchBtn.style.display = "inline-block";
   searchBtn.nextElementSibling.style.display = "inline-block";
 }
 
+function hideControllBtns() {
+  bookingBtn.style.display = "none";
+  searchBtn.style.display = "none";
+}
 
 ////////// search tab opener button ///////////////////
-let clickedSearch;
 function loadSearchView() {
-  if (clickedSearch) {
-    resultFieldElement.innerHTML = `<ul>
-      <li>
-      <span>ID</span>
-      <span>ჯავშნის ღირებულება</span>
-      <span> ჯავშნის წყარო </span>
-      <span> ოთახის ნომერი </span>
-      <span> თარიღი დან </span>
-      <span> თარიღი მდე </span>
-      </li>
-      </ul>`;
-    alert("get request will be sent by ajax if input field are filled");
-    return;
-  }
-
-  clickedSearch = true;
-  searchBtn.nextElementSibling.style.display = "none";
   formFieldSectionElement.innerHTML = `<form>
     <p>
         <label for="room-number">ოთახის ნომერი</label>
@@ -67,8 +50,11 @@ function loadSearchView() {
         <input type="date" name="end-date" id="end-date">
 
     </p>
-
+    <button>ძებნა</button>
     </form>`;
+
+  hideControllBtns();
+
   const backBtn = document.createElement("button");
   backBtn.textContent = "უკან";
   backBtn.id = "back-btn";
@@ -78,24 +64,16 @@ function loadSearchView() {
 
 searchBtn.addEventListener("click", loadSearchView);
 
-
-
 ///////// open booking form //////////////
-let clickedBooking;
 function loadBookingForm() {
-  if(clickedBooking){
-    alert('it will send booking form after validation')
-    return
-  }
-  clickedBooking = true
-  formFieldSectionElement.innerHTML = `<form>
+  formFieldSectionElement.innerHTML = `<form method="POST" action="/newbooking">
   <p>
   <label for="booking-name">ჯავშნის დასახელება</label>
-  <input type="text" id="booking-name" name="booking-name" maxlength="60" />
+  <input type="text" id="booking-name" name="booking-name" required maxlength="60" />
   </p>
   <p>
     <label for="booking-source">ჯავშნის წყარო</label>
-    <select name="booking-source" id="booking-source">
+    <select name="booking-source" id="booking-source" required>
       <option value="facebook">Facebook</option>
       <option value="suggestion">Friend Suggested</option>
       <option value="booking.com">Booking.com</option>
@@ -105,17 +83,19 @@ function loadBookingForm() {
   </p>
   <p>
     <label for="room-number">ოთახის ნომერი</label>
-    <select name="room-number" id="room-number">
+    <select name="room-number" id="room-number" required>
       
     </select>
   </p>
   <p>
     <label>თარიღი</label>
-    <input type="date" name="date-start" id="date-start">
-    <input type="date" name="date-end" id="date-end">
+    <input type="date" name="date-start" id="date-start" required>
+    <input type="date" name="date-end" id="date-end" required>
   </p>
+  <button>დაჯავშნა</button>
 </form>
 `;
+
   const roomNumberSelectElement = document.getElementById("room-number");
   for (const room of roomNumbers) {
     const roomOptionElement = document.createElement("option");
@@ -124,14 +104,14 @@ function loadBookingForm() {
     roomNumberSelectElement.appendChild(roomOptionElement);
   }
 
-
-  bookingBtn.previousElementSibling.style.display = 'none'
+  hideControllBtns();
   const backBtn = document.createElement("button");
   backBtn.textContent = "უკან";
   backBtn.id = "back-btn";
   bookingBtn.parentElement.appendChild(backBtn);
   backBtn.addEventListener("click", goToLandingPage);
-
 }
 
 bookingBtn.addEventListener("click", loadBookingForm);
+
+////////// validate booking form on change //////
