@@ -1,6 +1,10 @@
 const express = require('express')
 const path = require('path')
 const db = require('./data/database');
+const expressSession = require('express-session');
+
+const createSessionConfig = require('./config/session');
+
 
 const app = express();
 const baseRoutes = require('./router/routes')
@@ -11,6 +15,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+const sessionConfig = createSessionConfig();
+app.use(expressSession(sessionConfig));
 
 
 app.use(baseRoutes)
