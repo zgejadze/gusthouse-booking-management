@@ -33,7 +33,16 @@ function hideControllBtns() {
   searchBtn.style.display = "none";
 }
 
-////////// search tab opener button ///////////////////
+function createBackBtn(parrentElement) {
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "უკან";
+  backBtn.id = "back-btn";
+  parrentElement.appendChild(backBtn);
+  backBtn.addEventListener("click", goToLandingPage);
+}
+/////////////////////////////////////////
+////////// search tab ///////////////////
+/////////////////////////////////////////
 function loadSearchView() {
   formFieldSectionElement.innerHTML = `<form>
     <p>
@@ -55,16 +64,13 @@ function loadSearchView() {
 
   hideControllBtns();
 
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "უკან";
-  backBtn.id = "back-btn";
-  searchBtn.parentElement.appendChild(backBtn);
-  backBtn.addEventListener("click", goToLandingPage);
+  createBackBtn(searchBtn.parentElement);
 }
 
 searchBtn.addEventListener("click", loadSearchView);
-
+//////////////////////////////////////////
 ///////// open booking form //////////////
+//////////////////////////////////////////
 function loadBookingForm() {
   formFieldSectionElement.innerHTML = `<form>
   <p>
@@ -105,30 +111,33 @@ function loadBookingForm() {
   }
 
   hideControllBtns();
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "უკან";
-  backBtn.id = "back-btn";
-  bookingBtn.parentElement.appendChild(backBtn);
-  backBtn.addEventListener("click", goToLandingPage);
-  formFieldSectionElement.firstElementChild.addEventListener('submit', submitBooking)
 
+  const backBtn = document.getElementById("back-btn");
+  if (backBtn) {
+    backBtn.remove();
+  }
+  createBackBtn(bookingBtn.parentElement);
+
+  formFieldSectionElement.firstElementChild.addEventListener(
+    "submit",
+    submitBooking
+  );
 }
 
 bookingBtn.addEventListener("click", loadBookingForm);
 
-////////// validate booking form on change //////
-
-
+/////////////////////////
+//// send booking post///
+/////////////////////////
 async function submitBooking(event) {
-  event.preventDefault()
+  event.preventDefault();
   const submitData = {
-    name: document.getElementById('booking-name').value,
-    source: document.getElementById('booking-source').value,
-    room: document.getElementById('room-number').value,
-    startDate: document.getElementById('date-start').value,
-    endDate: document.getElementById('date-end').value
-  }
-
+    name: document.getElementById("booking-name").value,
+    source: document.getElementById("booking-source").value,
+    room: document.getElementById("room-number").value,
+    startDate: document.getElementById("date-start").value,
+    endDate: document.getElementById("date-end").value,
+  };
 
   let response;
   try {
@@ -148,6 +157,21 @@ async function submitBooking(event) {
     alert("something went wrong!");
     return;
   }
-  const data = await response.json();
-  console.log(data);
+  const bookingdata = await response.json();
+  bookingResponse(bookingdata.message, bookingdata.status);
+}
+
+function bookingResponse(message, status) {
+  if (status) {
+    formFieldSectionElement.innerHTML = "";
+    formFieldSectionElement.appendChild(document.createElement("p"));
+    formFieldSectionElement.firstElementChild.textContent = message;
+    bookingBtn.style.display = "inline-block";
+  } else {
+    formFieldSectionElement.insertBefore(
+      document.createElement("p"),
+      formFieldSectionElement.firstChild
+    );
+    formFieldSectionElement.firstElementChild.textContent = message;
+  }
 }

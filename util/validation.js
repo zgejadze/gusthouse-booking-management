@@ -37,11 +37,7 @@ function datesAreValid(bookingstart, bookingend) {
   const startDate = transformDate(bookingstart)
   const endDate = transformDate(bookingend)
 
-  const today = transformDate(new Date())
-
-  
- 
-  return startDate < endDate && startDate >= today;
+  return startDate < endDate;
 }
 
 function everyThingIsValid(name, source, room, startDate, endDate) {

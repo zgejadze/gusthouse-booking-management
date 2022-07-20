@@ -26,11 +26,11 @@ router.post("/newbooking", async function (req, res) {
   ) {
     await booking.save();
     console.log("booking saved");
-    res.status(201).json({ message: "booking saved" ,
-  succeded: true});
+    res.status(201).json({ message: "ჯავშანი წარმატებით შეინახა" ,
+    status: true});
   } else {
     console.log("something went wrong");
-    res.json({message:'something is wrong with inputs',  succeded: false})
+    res.json({message:'რაცხა გეშლება! გთხოვთ გადაამოწმოთ ყველა ველი',  status: false})
   }
 });
 
