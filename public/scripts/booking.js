@@ -168,10 +168,13 @@ function bookingResponse(message, status) {
     formFieldSectionElement.firstElementChild.textContent = message;
     bookingBtn.style.display = "inline-block";
   } else {
-    formFieldSectionElement.insertBefore(
-      document.createElement("p"),
-      formFieldSectionElement.firstChild
-    );
+    if(!document.getElementById('error-message')){
+      formFieldSectionElement.insertBefore(
+        document.createElement("p"),
+        formFieldSectionElement.firstChild
+      );
+      formFieldSectionElement.firstElementChild.id = 'error-message'
+    }
     formFieldSectionElement.firstElementChild.textContent = message;
   }
 }
