@@ -26,10 +26,11 @@ router.post("/newbooking", async function (req, res) {
   ) {
     await booking.save();
     console.log("booking saved");
-    res.status(201).json({ message: "booking saved" });
+    res.status(201).json({ message: "booking saved" ,
+  succeded: true});
   } else {
     console.log("something went wrong");
-    res.status(403).json({message:'something is wrong with inputs'})
+    res.json({message:'something is wrong with inputs',  succeded: false})
   }
 });
 
