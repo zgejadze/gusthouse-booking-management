@@ -22,13 +22,26 @@ function roomIsValid(roomNumber) {
     roomNumbersArray = process.env.ROOMNUMBERS;
   }
 
-  return roomNumbersArray.includes(roomNumber);
+  
+    return roomNumbersArray.includes(roomNumber)
+ 
 }
 
-function datesAreValid(startDate, endDate) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return startDate < endDate && startDate > today;
+function transformDate(date) {
+  const transformedDate = new Date(date);
+  transformedDate.setHours(0, 0, 0, 0);
+  return transformedDate
+}
+
+function datesAreValid(bookingstart, bookingend) {
+  const startDate = transformDate(bookingstart)
+  const endDate = transformDate(bookingend)
+
+  const today = transformDate(new Date())
+
+  
+ 
+  return startDate < endDate && startDate >= today;
 }
 
 function everyThingIsValid(name, source, room, startDate, endDate) {

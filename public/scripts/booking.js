@@ -66,7 +66,7 @@ searchBtn.addEventListener("click", loadSearchView);
 
 ///////// open booking form //////////////
 function loadBookingForm() {
-  formFieldSectionElement.innerHTML = `<form method="POST" action="/newbooking">
+  formFieldSectionElement.innerHTML = `<form>
   <p>
   <label for="booking-name">ჯავშნის დასახელება</label>
   <input type="text" id="booking-name" name="booking-name" required maxlength="60" />
@@ -110,8 +110,44 @@ function loadBookingForm() {
   backBtn.id = "back-btn";
   bookingBtn.parentElement.appendChild(backBtn);
   backBtn.addEventListener("click", goToLandingPage);
+  formFieldSectionElement.firstElementChild.addEventListener('submit', submitBooking)
+
 }
 
 bookingBtn.addEventListener("click", loadBookingForm);
 
 ////////// validate booking form on change //////
+
+
+async function submitBooking(event) {
+  event.preventDefault()
+  const submitData = {
+    name: document.getElementById('booking-name').value,
+    source: document.getElementById('booking-source').value,
+    room: document.getElementById('room-number').value,
+    startDate: document.getElementById('date-start').value,
+    endDate: document.getElementById('date-end').value
+  }
+
+
+  let response;
+  try {
+    response = await fetch("/newbooking", {
+      method: "POST",
+      body: JSON.stringify(submitData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    alert("something went wrong!");
+    return;
+  }
+
+  if (!response.ok) {
+    alert("something went wrong!");
+    return;
+  }
+  const data = await response.json();
+  console.log(data);
+}

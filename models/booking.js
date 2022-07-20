@@ -3,11 +3,11 @@ const db = require("../data/database");
 
 class Booking {
   constructor(bokingData) {
-    this.name = bokingData["booking-name"];
-    this.source = bokingData["booking-source"];
-    this.room = bokingData["room-number"];
-    this.startDate = bokingData["date-start"];
-    this.endDate = bokingData["date-end"];
+    this.name = bokingData.name;
+    this.source = bokingData.source;
+    this.room = bokingData.room;
+    this.startDate = bokingData.startDate;
+    this.endDate = bokingData.endDate;
   }
 
   async save() {

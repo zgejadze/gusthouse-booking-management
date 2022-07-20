@@ -13,7 +13,7 @@ router.get("/", function (req, res) {
 
 router.post("/newbooking", async function (req, res) {
   const booking = new Booking({
-    ...req.body,
+    ...req.body
   });
   if (
     validateUtil.everyThingIsValid(
@@ -24,13 +24,12 @@ router.post("/newbooking", async function (req, res) {
       req.body.endDate
     )
   ) {
-    booking.save();
-    console.log(booking);
+    await booking.save();
     console.log("booking saved");
-    res.json({message: "booking saved"})
+    res.status(201).json({ message: "booking saved" });
   } else {
     console.log("something went wrong");
-    
+    res.status(403).json({message:'something is wrong with inputs'})
   }
 });
 
