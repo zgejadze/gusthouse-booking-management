@@ -1,5 +1,9 @@
+let message;
 function isEmpty(value) {
+  if(!value || value.trim() === ""){
+    message = 'გთხოვთ შეავსოთ ყველა ველი'
   return !value || value.trim() === "";
+  }
 }
 
 function roomIsValid(roomNumber) {
@@ -23,7 +27,13 @@ function roomIsValid(roomNumber) {
   }
 
   
-    return roomNumbersArray.includes(roomNumber)
+    if (roomNumbersArray.includes(roomNumber)){
+
+      return true
+    }else{
+      message = 'მითითებულია არარსებული ოთახი'
+      return false
+    }
  
 }
 
@@ -37,11 +47,16 @@ function datesAreValid(bookingstart, bookingend) {
   const startDate = transformDate(bookingstart)
   const endDate = transformDate(bookingend)
 
-  return startDate < endDate;
+  if (startDate < endDate){
+    return true
+  } else {
+    message = "გთხოვთ გადაამოწმოთ თარიღები"
+    return false
+  };
 }
 
 function everyThingIsValid(name, source, room, startDate, endDate) {
-  return (
+  if(
     !isEmpty(name) &&
     !isEmpty(source) &&
     !isEmpty(room) &&
@@ -49,7 +64,21 @@ function everyThingIsValid(name, source, room, startDate, endDate) {
     !isEmpty(endDate) &&
     roomIsValid(room) &&
     datesAreValid(startDate, endDate)
-  )
+  ){
+    const validationData = {
+      status: true,
+      message: 'ჯავშანი წარმატებიტ დარეგისტრირდა'
+    }
+    return validationData
+  } else {
+    const validationData = {
+      status: false,
+      message
+    }
+    return validationData
+  }
+
+
   
 }
 

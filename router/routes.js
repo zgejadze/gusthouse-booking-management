@@ -15,22 +15,22 @@ router.post("/newbooking", async function (req, res) {
   const booking = new Booking({
     ...req.body
   });
+  const validationResult = validateUtil.everyThingIsValid(
+    req.body.name,
+    req.body.source,
+    req.body.room,
+    req.body.startDate,
+    req.body.endDate
+  )
   if (
-    validateUtil.everyThingIsValid(
-      req.body.name,
-      req.body.source,
-      req.body.room,
-      req.body.startDate,
-      req.body.endDate
-    )
+    validationResult.status
   ) {
     await booking.save();
     console.log("booking saved");
-    res.status(201).json({ message: "ჯავშანი წარმატებით შეინახა" ,
-    status: true});
+    res.status(201).json({message: validationResult.message,  status: validationResult.status})
   } else {
-    console.log("something went wrong");
-    res.json({message:'რაცხა გეშლება! გთხოვთ გადაამოწმოთ ყველა ველი',  status: false})
+    
+    res.json({message: validationResult.message,  status: validationResult.status})
   }
 });
 
