@@ -77,11 +77,26 @@ function everyThingIsValid(name, source, room, startDate, endDate) {
     }
     return validationData
   }
+}
 
-
-  
+function validateDatesForSearch(start, end){
+  if(datesAreValid(start, end)
+  ){
+    const validationData = {
+      status: true,
+      message: ''
+    }
+    return validationData
+  } else {
+    const validationData = {
+      status: false,
+      message
+    }
+    return validationData
+  }
 }
 
 module.exports = {
   everyThingIsValid: everyThingIsValid,
+  validateDatesForSearch: validateDatesForSearch
 };
