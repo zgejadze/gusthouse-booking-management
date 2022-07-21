@@ -23,7 +23,7 @@ class Booking {
     await db.getDb().collection("bookings").insertOne(bookingData);
   }
 
-  static async lookForFreeRooms(bookingStarts, bookingEnds) {
+  static async lookForBookedRooms(bookingStarts, bookingEnds) {
     const startDate = new Date(bookingStarts);
     const endDate = new Date(bookingEnds);
 

@@ -144,7 +144,19 @@ async function getFreeRooms(event) {
   }else{
     document.getElementById("error-message").remove()
   }
-  console.log(responseData);
+
+  resultFieldElement.innerHTML = ''
+  const freeRoomsListElement = document.createElement('ul')
+  freeRoomsListElement.id = 'free-rooms'
+  resultFieldElement.appendChild(freeRoomsListElement)
+  for(const room of responseData){
+    const roomElementContainer = document.createElement('li')
+    roomElementContainer.id = 'room-list-item'
+    freeRoomsListElement.appendChild(roomElementContainer)
+    const roomNameElement = document.createElement('p')
+    roomElementContainer.appendChild(roomNameElement)
+    roomNameElement.textContent = room
+  }
 }
 
 /////////////////////////
