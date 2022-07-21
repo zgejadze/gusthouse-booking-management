@@ -6,8 +6,8 @@ class Booking {
     this.name = bokingData.name;
     this.source = bokingData.source;
     this.room = bokingData.room;
-    this.startDate = bokingData.startDate;
-    this.endDate = bokingData.endDate;
+    this.startDate = new Date(bokingData.startDate);
+    this.endDate = new Date(bokingData.endDate);
   }
 
   async save() {
