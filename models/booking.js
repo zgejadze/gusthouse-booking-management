@@ -2,12 +2,13 @@ const mongodb = require("mongodb");
 const db = require("../data/database");
 
 class Booking {
-  constructor(bokingData) {
-    this.name = bokingData.name;
-    this.source = bokingData.source;
-    this.room = bokingData.room;
-    this.startDate = new Date(bokingData.startDate);
-    this.endDate = new Date(bokingData.endDate);
+  constructor(bookingData) {
+    this.name = bookingData.name;
+    this.source = bookingData.source;
+    this.room = bookingData.room;
+    this.startDate = new Date(bookingData.startDate);
+    this.endDate = new Date(bookingData.endDate);
+    this.id = bookingData._id;
   }
 
   async save() {
@@ -16,11 +17,43 @@ class Booking {
       source: this.source,
       room: this.room,
       startDate: this.startDate,
-      endDate: this.endDate
+      endDate: this.endDate,
     };
 
-    await db.getDb().collection('bookings').insertOne(bookingData)
+    await db.getDb().collection("bookings").insertOne(bookingData);
+  }
+
+  static async lookForFreeRooms(bookingStarts, bookingEnds) {
+    const startDate = new Date(bookingStarts);
+    const endDate = new Date(bookingEnds);
+
+    const query = {
+      $or: [
+        {
+          startDate: {
+            $gt: startDate,
+            $lt: endDate,
+          },
+        },
+        {
+          endDate: {
+            $gt: startDate,
+            $lt: endDate,
+          },
+        },
+      ],
+    };
+
+
+    const result = await db
+      .getDb()
+      .collection("bookings")
+      .find(query)
+      .toArray();
+    return result.map(function (result) {
+      return new Booking(result);
+    });
   }
 }
 
-module.exports = Booking
+module.exports = Booking;

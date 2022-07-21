@@ -1,37 +1,13 @@
 const express = require("express");
-const Booking = require("../models/booking");
-
-const validateUtil = require("../util/validation");
 
 const router = express.Router();
+const bookingController = require('../controller/booking.controller')
 
-router.get("/", function (req, res) {
-  // configs
+router.get("/", bookingController.getLanding
+);
 
-  res.render("index");
-});
+router.post("/newbooking", bookingController.saveBooking);
 
-router.post("/newbooking", async function (req, res) {
-  const booking = new Booking({
-    ...req.body
-  });
-  const validationResult = validateUtil.everyThingIsValid(
-    req.body.name,
-    req.body.source,
-    req.body.room,
-    req.body.startDate,
-    req.body.endDate
-  )
-  if (
-    validationResult.status
-  ) {
-    await booking.save();
-    console.log("booking saved");
-    res.status(201).json({message: validationResult.message,  status: validationResult.status})
-  } else {
-    
-    res.json({message: validationResult.message,  status: validationResult.status})
-  }
-});
+router.post("/getFreeRooms", bookingController.getFreeRooms);
 
 module.exports = router;
