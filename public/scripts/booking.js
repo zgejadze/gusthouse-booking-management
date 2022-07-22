@@ -140,23 +140,89 @@ async function getFreeRooms(event) {
       );
       formFieldSectionElement.firstElementChild.id = "error-message";
     }
-    formFieldSectionElement.firstElementChild.textContent = responseData.message;
-  }else{
-    document.getElementById("error-message").remove()
+    formFieldSectionElement.firstElementChild.textContent =
+      responseData.message;
+  } else {
+    document.getElementById("error-message").remove();
   }
 
-  resultFieldElement.innerHTML = ''
-  const freeRoomsListElement = document.createElement('ul')
-  freeRoomsListElement.id = 'free-rooms'
-  resultFieldElement.appendChild(freeRoomsListElement)
-  for(const room of responseData){
-    const roomElementContainer = document.createElement('li')
-    roomElementContainer.id = 'room-list-item'
-    freeRoomsListElement.appendChild(roomElementContainer)
-    const roomNameElement = document.createElement('p')
-    roomElementContainer.appendChild(roomNameElement)
-    roomNameElement.textContent = room
+  //// list of free rooms for selected period
+  createListOfFreeRooms(responseData);
+}
+
+// creates unordered list for free rooms
+function createListOfFreeRooms(freeRoomsArray) {
+  resultFieldElement.innerHTML = "";
+  const freeRoomsListElement = document.createElement("ul");
+  freeRoomsListElement.id = "free-rooms";
+  resultFieldElement.appendChild(freeRoomsListElement);
+  for (const room of freeRoomsArray) {
+    const roomElementContainer = document.createElement("li");
+    roomElementContainer.id = "room-list-item";
+    freeRoomsListElement.appendChild(roomElementContainer);
+    const roomNameElement = document.createElement("p");
+    roomElementContainer.appendChild(roomNameElement);
+    roomNameElement.textContent = room;
+
+    roomElementContainer.addEventListener("click", startBookingOnThisRoom);
   }
+}
+
+function startBookingOnThisRoom(event) {
+  const dates ={
+    startDate: new Date(document.getElementById("date-start").value).toISOString().substring(0, 10),
+    endDate: new Date(document.getElementById("date-end").value).toISOString().substring(0, 10),
+  }
+
+  formFieldSectionElement.innerHTML = `<form>
+    <p>
+    <label for="booking-name">ჯავშნის დასახელება</label>
+    <input
+      type="text"
+      id="booking-name"
+      name="booking-name"
+      required
+      maxlength="60"
+    />
+    </p>
+    <p>
+      <label for="booking-source">ჯავშნის წყარო</label>
+      <select name="booking-source" id="booking-source" required>
+        <option value="facebook">Facebook</option>
+        <option value="suggestion">Friend Suggested</option>
+        <option value="booking.com">Booking.com</option>
+        <option value="taxi">taxi driver</option>
+        <option value="other">other</option>
+      </select>
+    </p>
+    <p>
+      <label for="room-number">ოთახის ნომერი</label>
+      <select name="room-number" id="room-number" required></select>
+    </p>
+      <p>
+        <label>თარიღი</label>
+        <input type="date" value=${dates.startDate} name="date-start" id="date-start" required>
+        <input type="date" value=${dates.endDate} name="date-end" id="date-end" required>
+      </p>
+      <button>დაჯავშნა</button>
+    </form>`;
+
+  const roomNumberSelectElement = document.getElementById("room-number");
+  for (const room of roomNumbers) {
+    const roomOptionElement = document.createElement("option");
+    roomOptionElement.value = room;
+    roomOptionElement.textContent = room;
+    roomNumberSelectElement.appendChild(roomOptionElement);
+    if(event.target.textContent === room){
+      roomOptionElement.selected = 'selected'
+    }
+  }
+  resultFieldElement.innerHTML = "";
+
+  formFieldSectionElement.firstElementChild.addEventListener(
+    "submit",
+    submitBooking
+  );
 }
 
 /////////////////////////
