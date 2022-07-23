@@ -131,7 +131,6 @@ async function getFreeRooms(event) {
   }
 
   const responseData = await response.json();
-  console.log(responseData);
   if (!responseData.status) {
     if (!document.getElementById("error-message")) {
       formFieldSectionElement.insertBefore(

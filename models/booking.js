@@ -41,6 +41,10 @@ class Booking {
             $lt: endDate,
           },
         },
+        {
+          startDate: {$lte: startDate},
+          endDate: {$gte: endDate}
+        }
       ],
     };
 
