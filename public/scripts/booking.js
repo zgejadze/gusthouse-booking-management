@@ -150,7 +150,9 @@ async function getFreeRooms(event) {
   if(Array.isArray(responseData)){
     createListOfFreeRooms(responseData);
   }else if(responseData.status === 'notFree'){
-    document.getElementById("error-message").textContent = ''
+    if(document.getElementById("error-message")){
+      document.getElementById("error-message").remove();
+    }
     resultFieldElement.appendChild(document.createElement('p'))
     resultFieldElement.firstElementChild.textContent = responseData.message
   }
