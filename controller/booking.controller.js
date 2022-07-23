@@ -53,8 +53,10 @@ async function getFreeRooms(req, res) {
     req.body.startDate,
     req.body.endDate
   );
-  if (!validateUtil.createFreeRoomsList(existingBookings)) {
-    res.json((result = "სამწუხაროდ თავისუფალი ნომერი ამ დღეებში არ გვაქვს"));
+  if (!validateUtil.createFreeRoomsList(existingBookings)|| validateUtil.createFreeRoomsList(existingBookings).length === 0) {
+    res.json({message:  "სამწუხაროდ თავისუფალი ნომერი ამ დღეებში არ გვაქვს",
+    status: 'notFree'});
+    return
   }
   res.json(validateUtil.createFreeRoomsList(existingBookings))
 }

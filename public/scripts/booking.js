@@ -131,7 +131,7 @@ async function getFreeRooms(event) {
   }
 
   const responseData = await response.json();
-
+  console.log(responseData);
   if (!responseData.status) {
     if (!document.getElementById("error-message")) {
       formFieldSectionElement.insertBefore(
@@ -142,12 +142,18 @@ async function getFreeRooms(event) {
     }
     formFieldSectionElement.firstElementChild.textContent =
       responseData.message;
-  } else {
+    resultFieldElement.innerHTML = ""
+  } else if(responseData.status === true){
     document.getElementById("error-message").remove();
   }
 
   //// list of free rooms for selected period
-  createListOfFreeRooms(responseData);
+  if(Array.isArray(responseData)){
+    createListOfFreeRooms(responseData);
+  }else if(responseData.status === 'notFree'){
+    resultFieldElement.appendChild(document.createElement('p'))
+    resultFieldElement.firstElementChild.textContent = responseData.message
+  }
 }
 
 // creates unordered list for free rooms
