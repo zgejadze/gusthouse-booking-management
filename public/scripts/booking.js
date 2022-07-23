@@ -92,6 +92,14 @@ function loadBookingFirstForm() {
     getFreeRooms
   );
 
+  if(sessionStorage.dates || !sessionStorage.dates === null){
+    const dates = JSON.parse(sessionStorage.dates)
+    document.getElementById('date-start').value = dates.startDate
+    document.getElementById('date-end').value = dates.endDate
+    getFreeRooms()
+    sessionStorage.clear()
+  }
+
   backBtn.removeEventListener("click", loadBookingFirstForm);
   backBtn.addEventListener("click", goToLandingPage);
 }
@@ -103,12 +111,21 @@ bookingBtn.addEventListener("click", loadBookingFirstForm);
 ////////////////////////
 
 async function getFreeRooms(event) {
-  event.preventDefault();
+  if(event){
+    event.preventDefault();
+  }
 
-  const enteredDates = {
+  let enteredDates = {
     startDate: document.getElementById("date-start").value,
     endDate: document.getElementById("date-end").value,
   };
+  
+  if(sessionStorage.dates || !sessionStorage.dates === null){
+    enteredDates = JSON.parse(sessionStorage.dates)
+    console.log(enteredDates);
+    sessionStorage.clear()
+  }
+
 
   let response;
   try {
@@ -184,7 +201,7 @@ function startBookingOnThisRoom(event) {
       .toISOString()
       .substring(0, 10),
   };
-
+  sessionStorage.setItem('dates', JSON.stringify(dates))
   backBtn.removeEventListener("click", goToLandingPage);
   backBtn.addEventListener("click", loadBookingFirstForm);
 
