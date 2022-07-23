@@ -1,5 +1,6 @@
 const searchBtn = document.getElementById("search-btn");
 const bookingBtn = document.getElementById("new-booking-btn");
+const backBtn = document.createElement("button");
 
 const formFieldSectionElement = document.getElementById("form-field");
 const resultFieldElement = document.getElementById("result-field");
@@ -34,7 +35,6 @@ function hideControllBtns() {
 }
 
 function createBackBtn(parrentElement) {
-  const backBtn = document.createElement("button");
   backBtn.textContent = "უკან";
   backBtn.id = "back-btn";
   parrentElement.appendChild(backBtn);
@@ -71,7 +71,7 @@ searchBtn.addEventListener("click", loadSearchView);
 //////////////////////////////////////////
 ///////// open booking form //////////////
 //////////////////////////////////////////
-function loadBookingForm() {
+function loadBookingFirstForm() {
   formFieldSectionElement.innerHTML = `<form>
   
   <p>
@@ -85,19 +85,18 @@ function loadBookingForm() {
 
   hideControllBtns();
 
-  const backBtn = document.getElementById("back-btn");
-  if (backBtn) {
-    backBtn.remove();
-  }
   createBackBtn(bookingBtn.parentElement);
 
   formFieldSectionElement.firstElementChild.addEventListener(
     "submit",
     getFreeRooms
   );
+
+  backBtn.removeEventListener("click", loadBookingFirstForm);
+  backBtn.addEventListener("click", goToLandingPage);
 }
 
-bookingBtn.addEventListener("click", loadBookingForm);
+bookingBtn.addEventListener("click", loadBookingFirstForm);
 
 /////////////////////////
 ////// get free rooms////
@@ -141,20 +140,20 @@ async function getFreeRooms(event) {
     }
     formFieldSectionElement.firstElementChild.textContent =
       responseData.message;
-    resultFieldElement.innerHTML = ""
-  } else if(responseData.status === true){
+    resultFieldElement.innerHTML = "";
+  } else if (responseData.status === true) {
     document.getElementById("error-message").remove();
   }
 
   //// list of free rooms for selected period
-  if(Array.isArray(responseData)){
+  if (Array.isArray(responseData)) {
     createListOfFreeRooms(responseData);
-  }else if(responseData.status === 'notFree'){
-    if(document.getElementById("error-message")){
+  } else if (responseData.status === "notFree") {
+    if (document.getElementById("error-message")) {
       document.getElementById("error-message").remove();
     }
-    resultFieldElement.appendChild(document.createElement('p'))
-    resultFieldElement.firstElementChild.textContent = responseData.message
+    resultFieldElement.appendChild(document.createElement("p"));
+    resultFieldElement.firstElementChild.textContent = responseData.message;
   }
 }
 
@@ -166,7 +165,7 @@ function createListOfFreeRooms(freeRoomsArray) {
   resultFieldElement.appendChild(freeRoomsListElement);
   for (const room of freeRoomsArray) {
     const roomElementContainer = document.createElement("li");
-    roomElementContainer.classList.add( "room-list-item");
+    roomElementContainer.classList.add("room-list-item");
     freeRoomsListElement.appendChild(roomElementContainer);
     const roomNameElement = document.createElement("p");
     roomElementContainer.appendChild(roomNameElement);
@@ -177,10 +176,17 @@ function createListOfFreeRooms(freeRoomsArray) {
 }
 
 function startBookingOnThisRoom(event) {
-  const dates ={
-    startDate: new Date(document.getElementById("date-start").value).toISOString().substring(0, 10),
-    endDate: new Date(document.getElementById("date-end").value).toISOString().substring(0, 10),
-  }
+  const dates = {
+    startDate: new Date(document.getElementById("date-start").value)
+      .toISOString()
+      .substring(0, 10),
+    endDate: new Date(document.getElementById("date-end").value)
+      .toISOString()
+      .substring(0, 10),
+  };
+
+  backBtn.removeEventListener("click", goToLandingPage);
+  backBtn.addEventListener("click", loadBookingFirstForm);
 
   formFieldSectionElement.innerHTML = `<form>
     <p>
@@ -221,8 +227,8 @@ function startBookingOnThisRoom(event) {
     roomOptionElement.value = room;
     roomOptionElement.textContent = room;
     roomNumberSelectElement.appendChild(roomOptionElement);
-    if(event.target.textContent === room){
-      roomOptionElement.selected = 'selected'
+    if (event.target.textContent === room) {
+      roomOptionElement.selected = "selected";
     }
   }
   resultFieldElement.innerHTML = "";
@@ -274,6 +280,7 @@ function bookingResponse(message, status) {
     formFieldSectionElement.appendChild(document.createElement("p"));
     formFieldSectionElement.firstElementChild.textContent = message;
     bookingBtn.style.display = "inline-block";
+    backBtn.addEventListener('click', goToLandingPage)
   } else {
     if (!document.getElementById("error-message")) {
       formFieldSectionElement.insertBefore(
