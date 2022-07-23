@@ -150,6 +150,7 @@ async function getFreeRooms(event) {
   if(Array.isArray(responseData)){
     createListOfFreeRooms(responseData);
   }else if(responseData.status === 'notFree'){
+    document.getElementById("error-message").textContent = ''
     resultFieldElement.appendChild(document.createElement('p'))
     resultFieldElement.firstElementChild.textContent = responseData.message
   }
@@ -163,7 +164,7 @@ function createListOfFreeRooms(freeRoomsArray) {
   resultFieldElement.appendChild(freeRoomsListElement);
   for (const room of freeRoomsArray) {
     const roomElementContainer = document.createElement("li");
-    roomElementContainer.id = "room-list-item";
+    roomElementContainer.classList.add( "room-list-item");
     freeRoomsListElement.appendChild(roomElementContainer);
     const roomNameElement = document.createElement("p");
     roomElementContainer.appendChild(roomNameElement);
