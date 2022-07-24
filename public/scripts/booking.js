@@ -23,6 +23,7 @@ const roomNumbers = [
 ////////////// back button ///////////////////
 function goToLandingPage(event) {
   event.target.remove();
+  resultFieldElement.innerHTML = ""
   formFieldSectionElement.innerHTML = "";
   resultFieldElement.innerHTML = "";
   searchBtn.style.display = "inline-block";
@@ -122,7 +123,6 @@ async function getFreeRooms(event) {
   
   if(sessionStorage.dates || !sessionStorage.dates === null){
     enteredDates = JSON.parse(sessionStorage.dates)
-    console.log(enteredDates);
     sessionStorage.clear()
   }
 

@@ -20,8 +20,27 @@ async function saveBooking(req, res) {
     req.body.endDate
   );
 
+  const existingBooking = await Booking.RoomIsBooked(
+    req.body.room,
+    req.body.startDate,
+    req.body.endDate
+  );
+
+
+  if(existingBooking.length !== 0){
+    res.json({
+      message: "გთხოვთ გადაამოწმოთ ნომერი და თარიღი! მოცემულ თარიღებში ნომერი დაჯავშნილია",
+      status: false,
+    });
+    return
+  };
+
   if (validationResult.status) {
-    await booking.save();
+    try {
+      await booking.save();
+    } catch (error) {
+      next(error);
+    }
     console.log("booking saved");
     res.status(201).json({
       message: validationResult.message,
@@ -49,16 +68,26 @@ async function getFreeRooms(req, res) {
     return;
   }
 
-  const existingBookings = await Booking.lookForBookedRooms(
-    req.body.startDate,
-    req.body.endDate
-  );
-  if (!validateUtil.createFreeRoomsList(existingBookings)|| validateUtil.createFreeRoomsList(existingBookings).length === 0) {
-    res.json({message:  "სამწუხაროდ თავისუფალი ნომერი ამ დღეებში არ გვაქვს",
-    status: 'notFree'});
-    return
+  let existingBookings;
+  try {
+     existingBookings = await Booking.lookForBookedRooms(
+      req.body.startDate,
+      req.body.endDate
+    );
+  } catch (error) {
+    next(error);
   }
-  res.json(validateUtil.createFreeRoomsList(existingBookings))
+  if (
+    !validateUtil.createFreeRoomsList(existingBookings) ||
+    validateUtil.createFreeRoomsList(existingBookings).length === 0
+  ) {
+    res.json({
+      message: "სამწუხაროდ თავისუფალი ნომერი ამ დღეებში არ გვაქვს",
+      status: "notFree",
+    });
+    return;
+  }
+  res.json(validateUtil.createFreeRoomsList(existingBookings));
 }
 
 module.exports = {
