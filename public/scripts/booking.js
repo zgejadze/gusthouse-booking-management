@@ -185,7 +185,6 @@ async function loadBookedRooms(event) {
     ${createResultTable(bookedRooms.bookings)}
   </table>
   `
-  document.getElementById('sort').addEventListener('click', sortTable)
 }
 
 function createResultTable(bookingsArray){
