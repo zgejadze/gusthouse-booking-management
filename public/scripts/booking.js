@@ -147,7 +147,6 @@ async function loadBookedRooms(event) {
     };
   }
 
-  console.log(enteredData);
   // session storage need working on 
   if (sessionStorage.dates || !sessionStorage.dates === null) {
     enteredData = JSON.parse(sessionStorage.dates);
