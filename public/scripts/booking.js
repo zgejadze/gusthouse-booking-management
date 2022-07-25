@@ -174,6 +174,98 @@ async function loadBookedRooms(event) {
 
   const bookedRooms = await response.json();
   console.log(bookedRooms);
+  if(!bookedRooms.bookings || bookedRooms.bookings.length === 0){
+    alert('no bookings, needs work')
+    resultFieldElement.innerHTML = ''
+    return
+  }
+
+  resultFieldElement.innerHTML = `
+  <table id="result-table">
+    ${createResultTable(bookedRooms.bookings)}
+  </table>
+  `
+  document.getElementById('sort').addEventListener('click', sortTable)
+}
+
+function createResultTable(bookingsArray){
+  let bookings = `
+  <tr id="table-header">
+    <th onclick="sortTable(0)">ჯავშნის დასახელება</th>
+    <th onclick="sortTable(1)">ჯავშნის წყარო</th>
+    <th onclick="sortTable(2)">ოთახის ნომერი</th>
+    <th onclick="sortTable(3)">თარიღი დან</th>
+    <th onclick="sortTable(4)">თარიღი მდე</th>
+  </tr>`;
+  for(const booking of bookingsArray){
+    bookings= bookings + `
+    <tr>
+    <td>${booking.name}</td>
+    <td>${booking.source}</td>
+    <td>${booking.room}</td>
+    <td>${new Date(booking.startDate).toISOString().substring(0, 10)}</td>
+    <td>${new Date(booking.endDate).toISOString().substring(0, 10)}</td>
+  </tr>
+    `
+  }
+  
+
+  return bookings
+}
+
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("result-table");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
 }
 
 searchBtn.addEventListener("click", loadSearchView);
