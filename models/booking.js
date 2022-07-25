@@ -42,28 +42,27 @@ class Booking {
           },
         },
         {
-          startDate: {$lte: startDate},
-          endDate: {$gte: endDate}
-        }
+          startDate: { $lte: startDate },
+          endDate: { $gte: endDate },
+        },
       ],
     };
 
-    
-      const result = await db
-        .getDb()
-        .collection("bookings")
-        .find(query)
-        .toArray();
-      return result.map(function (result) {
-        return new Booking(result);
-      });
-   
+    const result = await db
+      .getDb()
+      .collection("bookings")
+      .find(query)
+      .toArray();
+    return result.map(function (result) {
+      return new Booking(result);
+    });
   }
 
-  static async RoomIsBooked(room, bookingStarts, bookingEnds){
+  static async RoomIsBooked(room, bookingStarts, bookingEnds) {
     const startDate = new Date(bookingStarts);
     const endDate = new Date(bookingEnds);
-    const query = {room: room,
+    const query = {
+      room: room,
       $or: [
         {
           startDate: {
@@ -78,29 +77,106 @@ class Booking {
           },
         },
         {
-          startDate: {$lte: startDate},
-          endDate: {$gte: endDate}
-        }
-      ]}
-      try {
-        const result = await db
-          .getDb()
-          .collection("bookings")
-          .find(query)
-          .toArray();
-        return result.map(function (result) {
-          return new Booking(result);
-        });
-      } catch (error) {
-        next(error)
-      }
+          startDate: { $lte: startDate },
+          endDate: { $gte: endDate },
+        },
+      ],
     };
-
-    
-
-
+    try {
+      const result = await db
+        .getDb()
+        .collection("bookings")
+        .find(query)
+        .toArray();
+      return result.map(function (result) {
+        return new Booking(result);
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
+  static async searchSourceAndDates(source, bookingStarts, bookingEnds) {
+    const startDate = new Date(bookingStarts);
+    const endDate = new Date(bookingEnds);
+    const query = {
+      source: source,
+      $or: [
+        {
+          startDate: {
+            $gt: startDate,
+            $lt: endDate,
+          },
+        },
+        {
+          endDate: {
+            $gt: startDate,
+            $lt: endDate,
+          },
+        },
+        {
+          startDate: { $lte: startDate },
+          endDate: { $gte: endDate },
+        },
+      ],
+    };
+    try {
+      const result = await db
+        .getDb()
+        .collection("bookings")
+        .find(query)
+        .toArray();
+      return result.map(function (result) {
+        return new Booking(result);
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
+  static async searchWithRoomAndSource(
+    room,
+    source,
+    bookingStarts,
+    bookingEnds
+  ) {
+    const startDate = new Date(bookingStarts);
+    const endDate = new Date(bookingEnds);
+    const query = {
+      source: source,
+      room: room,
+      $or: [
+        {
+          startDate: {
+            $gt: startDate,
+            $lt: endDate,
+          },
+        },
+        {
+          endDate: {
+            $gt: startDate,
+            $lt: endDate,
+          },
+        },
+        {
+          startDate: { $lte: startDate },
+          endDate: { $gte: endDate },
+        },
+      ],
+    };
+    try {
+      const result = await db
+        .getDb()
+        .collection("bookings")
+        .find(query)
+        .toArray();
+      return result.map(function (result) {
+        return new Booking(result);
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
 
 module.exports = Booking;

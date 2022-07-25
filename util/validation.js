@@ -21,15 +21,27 @@ function isEmpty(value) {
   }
 }
 
-function roomIsValid(roomNumber) {
+function roomIsValid(roomNumber, forSearch = false) {
   if (process.env.ROOMNUMBERS) {
     roomNumbersArray = process.env.ROOMNUMBERS;
   }
 
   if (roomNumbersArray.includes(roomNumber)) {
+    if(forSearch === true) {
+      return {
+        status: true,
+        message: '',
+      }
+    }
     return true;
   } else {
     message = "მითითებულია არარსებული ოთახი";
+    if(forSearch === true) {
+      return {
+        status: false,
+        message: message,
+      }
+    }
     return false;
   }
 }
@@ -112,5 +124,6 @@ function createFreeRoomsList(bookings) {
 module.exports = {
   everyThingIsValid: everyThingIsValid,
   validateDatesForSearch: validateDatesForSearch,
-  createFreeRoomsList: createFreeRoomsList
+  createFreeRoomsList: createFreeRoomsList,
+  roomIsValid: roomIsValid
 };
