@@ -558,6 +558,7 @@ function bookingResponse(message, status) {
     formFieldSectionElement.appendChild(document.createElement("p"));
     formFieldSectionElement.firstElementChild.textContent = message;
     bookingBtn.style.display = "inline-block";
+    backBtn.removeEventListener('click', loadBookingFirstForm)
     backBtn.addEventListener("click", goToLandingPage);
   } else {
     if (!document.getElementById("error-message")) {
