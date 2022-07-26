@@ -208,10 +208,22 @@ async function deleteBooking(req, res, next){
   res.json({ message: 'Deleted product!' });
 }
 
+async function getSingleBooking(req, res, next){
+  let booking;
+  try {
+    booking = await Booking.findById(req.params.id);
+  } catch (error) {
+    return next(error);
+  }
+
+  res.json({booking: booking})
+}
+
 module.exports = {
   getLanding: getLanding,
   saveBooking: saveBooking,
   getFreeRooms: getFreeRooms,
   getBookedRooms: getBookedRooms,
-  deleteBooking: deleteBooking
+  deleteBooking: deleteBooking,
+  getSingleBooking: getSingleBooking
 };

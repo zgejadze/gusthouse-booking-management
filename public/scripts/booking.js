@@ -231,22 +231,9 @@ function createResultTable(bookingsArray) {
         tdElement.appendChild(deleteButton);
         tdElement.appendChild(editButton);
         deleteButton.addEventListener("click", deleteBooking);
+        editButton.addEventListener("click", loadBookingEditForm);
       }
     }
-
-    // bookings =
-    //   bookings +
-    //   `<tr>
-    //   <td>${booking.name}</td>
-    //   <td>${booking.source}</td>
-    //   <td>${booking.room}</td>
-    //   <td>${new Date(booking.startDate).toISOString().substring(0, 10)}</td>
-    //   <td>${new Date(booking.endDate).toISOString().substring(0, 10)}</td>
-    //   <td class="icons">
-    //     <i data-bookingid="${booking.id}" class="fa-regular fa-trash-can"</i>
-    //     <i id="edit-icon" data-id="${booking.id}" class="fa-regular fa-pen-to-square"></i>
-    //   </td>
-    // </tr>`;
   }
 }
 
@@ -267,6 +254,85 @@ async function deleteBooking(event) {
   loadBookedRooms();
 }
 
+async function loadBookingEditForm(event) {
+
+
+  const bookingId = event.target.dataset.bookingid;
+  const response = await fetch("booking/" + bookingId);
+  const responseData = await response.json();
+  console.log(responseData);
+  const valuesArray = Object.values(responseData.booking)
+
+  const sourceInputElement = document.createElement("p");
+  sourceInputElement.innerHTML = `
+    <label for="booking-name">ჯავშნის დასახელება</label>
+    <input
+      type="text"
+      id="booking-name"
+      name="booking-name"
+      required
+      maxlength="60"
+    />
+  `;
+  const formField = formFieldSectionElement.firstElementChild;
+  formField.appendChild(sourceInputElement);
+
+  formField.insertBefore(sourceInputElement, formField.children[0]);
+  const selectInputs = document.querySelectorAll("#form-field select");
+  for (const selectinput of selectInputs) {
+    for (const option of selectinput) {
+      if(valuesArray.includes(option.value)){
+        option.selected = 'selected'
+      };
+    }
+  }
+  document.querySelector('#booking-name').value = responseData.booking.name
+  document.querySelector('#date-start').value = responseData.booking.startDate.substring(0, 10)
+  document.querySelector('#date-end').value = responseData.booking.endDate.substring(0, 10)
+
+  formField.lastElementChild.textContent = 'შენახვა'
+  formField.removeEventListener('submit', loadBookingEditForm)
+  formField.dataset.bookingid = bookingId
+  formField/addEventListener('submit', saveNewBooking)
+  resultFieldElement.innerHTML = ''
+}
+
+async function saveNewBooking(event){
+  event.preventDefault();
+  const submitData = {
+    name: document.getElementById("booking-name").value,
+    source: document.getElementById("booking-source").value,
+    room: document.getElementById("room-number").value,
+    startDate: document.getElementById("date-start").value,
+    endDate: document.getElementById("date-end").value,
+    id: event.target.dataset.bookingid
+  };
+
+  let response;
+  try {
+    response = await fetch("/newbooking/"+ submitData.id, {
+      method: "patch",
+      body: JSON.stringify(submitData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    alert("something went wrong!");
+    return;
+  }
+
+  if (!response.ok) {
+    alert("something went wrong!");
+    return;
+  }
+  const bookingdata = await response.json();
+  bookingResponse(bookingdata.message, bookingdata.status);
+}
+
+////////////////////////////////////////////
+/// function for sorting table///
+///////////////////////////////////////////
 function sortTable(n, typeDate = false) {
   var table,
     rows,
@@ -301,10 +367,10 @@ function sortTable(n, typeDate = false) {
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
       // console.log(x.innerHTML.split("/").reverse().join("/"));
-      
+
       if (typeDate) {
-         xDate = new Date(x.innerHTML.split("/").reverse().join("/"));
-         yDate = new Date(y.innerHTML.split("/").reverse().join("/"));
+        xDate = new Date(x.innerHTML.split("/").reverse().join("/"));
+        yDate = new Date(y.innerHTML.split("/").reverse().join("/"));
       }
       if (dir == "asc") {
         if (typeDate) {
@@ -321,14 +387,13 @@ function sortTable(n, typeDate = false) {
           }
         }
       } else if (dir == "desc") {
-        if(typeDate){
+        if (typeDate) {
           if (xDate < yDate) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;
           }
-
-        }else {
+        } else {
           if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
@@ -356,6 +421,7 @@ function sortTable(n, typeDate = false) {
 }
 
 searchBtn.addEventListener("click", loadSearchView);
+
 //////////////////////////////////////////
 ///////// open booking form //////////////
 //////////////////////////////////////////

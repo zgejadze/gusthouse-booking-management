@@ -14,4 +14,6 @@ router.post('/getBookedRooms', bookingController.getBookedRooms)
 
 router.delete('/bookings/:id', bookingController.deleteBooking)
 
+router.get('/booking/:id', bookingController.getSingleBooking)
+
 module.exports = router;

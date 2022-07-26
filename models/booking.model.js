@@ -25,16 +25,18 @@ class Booking {
 
   static async findById(bookingId) {
     let bookId;
+    let booking
     try {
       bookId = new mongodb.ObjectId(bookingId);
+      booking = await db
+      .getDb()
+      .collection('bookings')
+      .findOne({ _id: bookId });
     } catch (error) {
       error.code = 404;
       throw error;
     }
-    const booking = await db
-      .getDb()
-      .collection('bookings')
-      .findOne({ _id: bookId });
+    
 
     if (!booking) {
       const error = new Error('Could not find booking with provided id.');
