@@ -185,8 +185,8 @@ async function loadBookedRooms(event) {
     <th onclick="sortTable(0)">ჯავშნის დასახელება</th>
     <th onclick="sortTable(1)">ჯავშნის წყარო</th>
     <th onclick="sortTable(2)">ოთახის ნომერი</th>
-    <th onclick="sortTable(3)">თარიღი დან</th>
-    <th onclick="sortTable(4)">თარიღი მდე</th>
+    <th onclick="sortTable(3, true)">თარიღი დან</th>
+    <th onclick="sortTable(4, true)">თარიღი მდე</th>
     <th id="icon-column"></th>
   </tr>
   </thead>
@@ -197,7 +197,8 @@ async function loadBookedRooms(event) {
 }
 
 function createResultTable(bookingsArray) {
-  const resultTableElement = document.getElementById("result-table").lastElementChild;
+  const resultTableElement =
+    document.getElementById("result-table").lastElementChild;
 
   for (const booking of bookingsArray) {
     const tableRowElement = document.createElement("tr");
@@ -216,21 +217,20 @@ function createResultTable(bookingsArray) {
       const tdElement = document.createElement("td");
       tableRowElement.appendChild(tdElement);
       tdElement.textContent = Object.values(booking)[i];
-      if(i === Object.keys(booking).length - 1) {
-        tdElement.innerHTML = ''
+      if (i === Object.keys(booking).length - 1) {
+        tdElement.innerHTML = "";
 
-        const deleteButton = document.createElement('i')
-        const editButton =  document.createElement('i')
+        const deleteButton = document.createElement("i");
+        const editButton = document.createElement("i");
 
-        deleteButton.dataset.bookingid = booking.id
-        deleteButton.classList.add('fa-regular', 'fa-trash-can')
-        editButton.dataset.bookingid = booking.id
-        editButton.classList.add('fa-regular', 'fa-pen-to-square')
+        deleteButton.dataset.bookingid = booking.id;
+        deleteButton.classList.add("fa-regular", "fa-trash-can");
+        editButton.dataset.bookingid = booking.id;
+        editButton.classList.add("fa-regular", "fa-pen-to-square");
 
-
-        tdElement.appendChild(deleteButton)
-        tdElement.appendChild(editButton)
-        deleteButton.addEventListener('click', deleteBooking)
+        tdElement.appendChild(deleteButton);
+        tdElement.appendChild(editButton);
+        deleteButton.addEventListener("click", deleteBooking);
       }
     }
 
@@ -264,16 +264,18 @@ async function deleteBooking(event) {
     alert("something went wrong");
     return;
   }
-  loadBookedRooms()
+  loadBookedRooms();
 }
 
-function sortTable(n) {
+function sortTable(n, typeDate = false) {
   var table,
     rows,
     switching,
     i,
     x,
+    xDate,
     y,
+    yDate,
     shouldSwitch,
     dir,
     switchcount = 0;
@@ -298,17 +300,40 @@ function sortTable(n) {
       y = rows[i + 1].getElementsByTagName("TD")[n];
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
+      // console.log(x.innerHTML.split("/").reverse().join("/"));
+      
+      if (typeDate) {
+         xDate = new Date(x.innerHTML.split("/").reverse().join("/"));
+         yDate = new Date(y.innerHTML.split("/").reverse().join("/"));
+      }
       if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
+        if (typeDate) {
+          if (xDate > yDate) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        } else {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
         }
       } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
+        if(typeDate){
+          if (xDate < yDate) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+
+        }else {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
         }
       }
     }
@@ -558,7 +583,7 @@ function bookingResponse(message, status) {
     formFieldSectionElement.appendChild(document.createElement("p"));
     formFieldSectionElement.firstElementChild.textContent = message;
     bookingBtn.style.display = "inline-block";
-    backBtn.removeEventListener('click', loadBookingFirstForm)
+    backBtn.removeEventListener("click", loadBookingFirstForm);
     backBtn.addEventListener("click", goToLandingPage);
   } else {
     if (!document.getElementById("error-message")) {
