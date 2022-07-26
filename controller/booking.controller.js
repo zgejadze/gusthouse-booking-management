@@ -1,4 +1,4 @@
-const Booking = require("../models/booking");
+const Booking = require("../models/booking.model");
 
 const validateUtil = require("../util/validation");
 
@@ -196,9 +196,22 @@ async function getBookedRooms(req, res, next) {
   }
 }
 
+async function deleteBooking(req, res, next){
+  let booking;
+  try {
+    booking = await Booking.findById(req.params.id);
+    await booking.remove();
+  } catch (error) {
+    return next(error);
+  }
+
+  res.json({ message: 'Deleted product!' });
+}
+
 module.exports = {
   getLanding: getLanding,
   saveBooking: saveBooking,
   getFreeRooms: getFreeRooms,
   getBookedRooms: getBookedRooms,
+  deleteBooking: deleteBooking
 };

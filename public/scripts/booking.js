@@ -110,7 +110,6 @@ async function loadBookedRooms(event) {
     endDate: document.getElementById("date-end").value,
   };
 
-  
   if (
     document.getElementById("room-number") &&
     !document.getElementById("booking-source")
@@ -147,7 +146,7 @@ async function loadBookedRooms(event) {
     };
   }
 
-  // session storage need working on 
+  // session storage need working on
   if (sessionStorage.dates || !sessionStorage.dates === null) {
     enteredData = JSON.parse(sessionStorage.dates);
     sessionStorage.clear();
@@ -173,47 +172,111 @@ async function loadBookedRooms(event) {
   }
 
   const bookedRooms = await response.json();
-  console.log(bookedRooms);
-  if(!bookedRooms.bookings || bookedRooms.bookings.length === 0){
-    alert('no bookings, needs work')
-    resultFieldElement.innerHTML = ''
-    return
+  if (!bookedRooms.bookings || bookedRooms.bookings.length === 0) {
+    alert("no bookings, needs work");
+    resultFieldElement.innerHTML = "";
+    return;
   }
 
   resultFieldElement.innerHTML = `
   <table id="result-table">
-    ${createResultTable(bookedRooms.bookings)}
-  </table>
-  `
-}
-
-function createResultTable(bookingsArray){
-  let bookings = `
+  <thead>
   <tr id="table-header">
     <th onclick="sortTable(0)">ჯავშნის დასახელება</th>
     <th onclick="sortTable(1)">ჯავშნის წყარო</th>
     <th onclick="sortTable(2)">ოთახის ნომერი</th>
     <th onclick="sortTable(3)">თარიღი დან</th>
     <th onclick="sortTable(4)">თარიღი მდე</th>
-  </tr>`;
-  for(const booking of bookingsArray){
-    bookings= bookings + `
-    <tr>
-    <td>${booking.name}</td>
-    <td>${booking.source}</td>
-    <td>${booking.room}</td>
-    <td>${new Date(booking.startDate).toISOString().substring(0, 10)}</td>
-    <td>${new Date(booking.endDate).toISOString().substring(0, 10)}</td>
+    <th id="icon-column"></th>
   </tr>
-    `
-  }
-  
+  </thead>
+  <tbody></tbody>
+  </table>
+  `;
+  createResultTable(bookedRooms.bookings);
+}
 
-  return bookings
+function createResultTable(bookingsArray) {
+  const resultTableElement = document.getElementById("result-table").lastElementChild;
+
+  for (const booking of bookingsArray) {
+    const tableRowElement = document.createElement("tr");
+    resultTableElement.appendChild(tableRowElement);
+    booking.startDate = new Date(booking.startDate).toLocaleDateString(
+      "en-GB",
+      { year: "numeric", month: "numeric", day: "numeric" }
+    );
+    booking.endDate = new Date(booking.endDate).toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
+    let i;
+    for (i = 0; i < Object.keys(booking).length; i++) {
+      const tdElement = document.createElement("td");
+      tableRowElement.appendChild(tdElement);
+      tdElement.textContent = Object.values(booking)[i];
+      if(i === Object.keys(booking).length - 1) {
+        tdElement.innerHTML = ''
+
+        const deleteButton = document.createElement('i')
+        const editButton =  document.createElement('i')
+
+        deleteButton.dataset.bookingid = booking.id
+        deleteButton.classList.add('fa-regular', 'fa-trash-can')
+        editButton.dataset.bookingid = booking.id
+        editButton.classList.add('fa-regular', 'fa-pen-to-square')
+
+
+        tdElement.appendChild(deleteButton)
+        tdElement.appendChild(editButton)
+        deleteButton.addEventListener('click', deleteBooking)
+      }
+    }
+
+    // bookings =
+    //   bookings +
+    //   `<tr>
+    //   <td>${booking.name}</td>
+    //   <td>${booking.source}</td>
+    //   <td>${booking.room}</td>
+    //   <td>${new Date(booking.startDate).toISOString().substring(0, 10)}</td>
+    //   <td>${new Date(booking.endDate).toISOString().substring(0, 10)}</td>
+    //   <td class="icons">
+    //     <i data-bookingid="${booking.id}" class="fa-regular fa-trash-can"</i>
+    //     <i id="edit-icon" data-id="${booking.id}" class="fa-regular fa-pen-to-square"></i>
+    //   </td>
+    // </tr>`;
+  }
+}
+
+////////////////////////////////////////
+// edit and delete booking functions  //
+////////////////////////////////////////
+
+async function deleteBooking(event) {
+  const bookingId = event.target.dataset.bookingid;
+
+  const response = await fetch("/bookings/" + bookingId, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    alert("something went wrong");
+    return;
+  }
+  loadBookedRooms()
 }
 
 function sortTable(n) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  var table,
+    rows,
+    switching,
+    i,
+    x,
+    y,
+    shouldSwitch,
+    dir,
+    switchcount = 0;
   table = document.getElementById("result-table");
   switching = true;
   // Set the sorting direction to ascending:
@@ -226,7 +289,7 @@ function sortTable(n) {
     rows = table.rows;
     /* Loop through all table rows (except the
     first, which contains table headers): */
-    for (i = 1; i < (rows.length - 1); i++) {
+    for (i = 1; i < rows.length - 1; i++) {
       // Start by saying there should be no switching:
       shouldSwitch = false;
       /* Get the two elements you want to compare,
@@ -255,7 +318,7 @@ function sortTable(n) {
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
       switching = true;
       // Each time a switch is done, increase this count by 1:
-      switchcount ++;
+      switchcount++;
     } else {
       /* If no switching has been done AND the direction is "asc",
       set the direction to "desc" and run the while loop again. */

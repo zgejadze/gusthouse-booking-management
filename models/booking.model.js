@@ -23,6 +23,35 @@ class Booking {
     await db.getDb().collection("bookings").insertOne(bookingData);
   }
 
+  static async findById(bookingId) {
+    let bookId;
+    try {
+      bookId = new mongodb.ObjectId(bookingId);
+    } catch (error) {
+      error.code = 404;
+      throw error;
+    }
+    const booking = await db
+      .getDb()
+      .collection('bookings')
+      .findOne({ _id: bookId });
+
+    if (!booking) {
+      const error = new Error('Could not find booking with provided id.');
+      error.code = 404;
+      throw error;
+    }
+
+    return new Booking(booking);
+  }
+
+  remove() {
+    const bookingId = new mongodb.ObjectId(this.id);
+    return db.getDb().collection('bookings').deleteOne({ _id: bookingId });
+  }
+
+
+
   static async lookForBookedRooms(bookingStarts, bookingEnds) {
     const startDate = new Date(bookingStarts);
     const endDate = new Date(bookingEnds);
