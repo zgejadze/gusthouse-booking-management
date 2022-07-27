@@ -292,11 +292,11 @@ async function loadBookingEditForm(event) {
   formField.lastElementChild.textContent = 'შენახვა'
   formField.removeEventListener('submit', loadBookedRooms)
   formField.dataset.bookingid = bookingId
-  formField.addEventListener('submit', saveNewBooking)
+  formField.addEventListener('submit', saveUpdatedBooking)
   resultFieldElement.innerHTML = ''
 }
 
-async function saveNewBooking(event){
+async function saveUpdatedBooking(event){
   event.preventDefault();
   const submitData = {
     name: document.getElementById("booking-name").value,
