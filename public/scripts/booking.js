@@ -260,7 +260,6 @@ async function loadBookingEditForm(event) {
   const bookingId = event.target.dataset.bookingid;
   const response = await fetch("booking/" + bookingId);
   const responseData = await response.json();
-  console.log(responseData);
   const valuesArray = Object.values(responseData.booking)
 
   const sourceInputElement = document.createElement("p");
@@ -291,9 +290,9 @@ async function loadBookingEditForm(event) {
   document.querySelector('#date-end').value = responseData.booking.endDate.substring(0, 10)
 
   formField.lastElementChild.textContent = 'შენახვა'
-  formField.removeEventListener('submit', loadBookingEditForm)
+  formField.removeEventListener('submit', loadBookedRooms)
   formField.dataset.bookingid = bookingId
-  formField/addEventListener('submit', saveNewBooking)
+  formField.addEventListener('submit', saveNewBooking)
   resultFieldElement.innerHTML = ''
 }
 
@@ -305,13 +304,12 @@ async function saveNewBooking(event){
     room: document.getElementById("room-number").value,
     startDate: document.getElementById("date-start").value,
     endDate: document.getElementById("date-end").value,
-    id: event.target.dataset.bookingid
   };
 
   let response;
   try {
-    response = await fetch("/newbooking/"+ submitData.id, {
-      method: "patch",
+    response = await fetch("/bookings/"+ event.target.dataset.bookingid, {
+      method: "PATCH",
       body: JSON.stringify(submitData),
       headers: {
         "Content-Type": "application/json",

@@ -16,4 +16,6 @@ router.delete('/bookings/:id', bookingController.deleteBooking)
 
 router.get('/booking/:id', bookingController.getSingleBooking)
 
+router.patch('/bookings/:id', bookingController.editBooking)
+
 module.exports = router;

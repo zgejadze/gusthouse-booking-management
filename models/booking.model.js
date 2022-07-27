@@ -8,7 +8,9 @@ class Booking {
     this.room = bookingData.room;
     this.startDate = new Date(bookingData.startDate);
     this.endDate = new Date(bookingData.endDate);
-    this.id = bookingData._id;
+    if (bookingData._id) {
+      this.id = bookingData._id.toString();
+    }
   }
 
   async save() {
@@ -20,26 +22,35 @@ class Booking {
       endDate: this.endDate,
     };
 
-    await db.getDb().collection("bookings").insertOne(bookingData);
+    if (this.id) {
+      const bookingId = new mongodb.ObjectId(this.id);
+      await db.getDb().collection("bookings").updateOne(
+        { _id: bookingId },
+        {
+          $set: bookingData,
+        }
+      );
+    } else {
+      await db.getDb().collection("bookings").insertOne(bookingData);
+    }
   }
 
   static async findById(bookingId) {
     let bookId;
-    let booking
+    let booking;
     try {
       bookId = new mongodb.ObjectId(bookingId);
       booking = await db
-      .getDb()
-      .collection('bookings')
-      .findOne({ _id: bookId });
+        .getDb()
+        .collection("bookings")
+        .findOne({ _id: bookId });
     } catch (error) {
       error.code = 404;
       throw error;
     }
-    
 
     if (!booking) {
-      const error = new Error('Could not find booking with provided id.');
+      const error = new Error("Could not find booking with provided id.");
       error.code = 404;
       throw error;
     }
@@ -49,10 +60,8 @@ class Booking {
 
   remove() {
     const bookingId = new mongodb.ObjectId(this.id);
-    return db.getDb().collection('bookings').deleteOne({ _id: bookingId });
+    return db.getDb().collection("bookings").deleteOne({ _id: bookingId });
   }
-
-
 
   static async lookForBookedRooms(bookingStarts, bookingEnds) {
     const startDate = new Date(bookingStarts);
@@ -89,10 +98,10 @@ class Booking {
     });
   }
 
-  static async RoomIsBooked(room, bookingStarts, bookingEnds) {
+  static async RoomIsBooked(room, bookingStarts, bookingEnds, id = false) {
     const startDate = new Date(bookingStarts);
     const endDate = new Date(bookingEnds);
-    const query = {
+    let query = {
       room: room,
       $or: [
         {
@@ -113,6 +122,34 @@ class Booking {
         },
       ],
     };
+
+    if (id) {
+      const curretBookingId = new mongodb.ObjectId(id);
+
+      query = {
+        _id: { $ne: curretBookingId },
+        room: room,
+        $or: [
+          {
+            startDate: {
+              $gt: startDate,
+              $lt: endDate,
+            },
+          },
+          {
+            endDate: {
+              $gt: startDate,
+              $lt: endDate,
+            },
+          },
+          {
+            startDate: { $lte: startDate },
+            endDate: { $gte: endDate },
+          },
+        ],
+      };
+    }
+
     try {
       const result = await db
         .getDb()

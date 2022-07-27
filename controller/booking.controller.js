@@ -219,11 +219,63 @@ async function getSingleBooking(req, res, next){
   res.json({booking: booking})
 }
 
+async function editBooking(req, res, next) {
+  const booking = new Booking({
+    ...req.body,
+    _id: req.params.id
+  });
+  const validationResult = validateUtil.everyThingIsValid(
+    req.body.name,
+    req.body.source,
+    req.body.room,
+    req.body.startDate,
+    req.body.endDate
+  );
+  let existingBooking;
+  try {
+    existingBooking = await Booking.RoomIsBooked(
+      req.body.room,
+      req.body.startDate,
+      req.body.endDate,
+      req.params.id
+    );
+  } catch (error) {
+    next(error);
+  }
+  
+  if (existingBooking.length !== 0) {
+    res.json({
+      message:
+        "გთხოვთ გადაამოწმოთ ნომერი და თარიღი! მოცემულ თარიღებში ნომერი დაჯავშნილია",
+      status: false,
+    });
+    return;
+  }
+  
+  try {
+    if (validationResult.status) {
+      await booking.save()
+      res.status(201).json({
+        message: validationResult.message,
+        status: validationResult.status,
+      });
+    } else {
+      res.json({
+        message: validationResult.message,
+        status: validationResult.status,
+      });
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   getLanding: getLanding,
   saveBooking: saveBooking,
   getFreeRooms: getFreeRooms,
   getBookedRooms: getBookedRooms,
   deleteBooking: deleteBooking,
-  getSingleBooking: getSingleBooking
+  getSingleBooking: getSingleBooking,
+  editBooking: editBooking
 };
