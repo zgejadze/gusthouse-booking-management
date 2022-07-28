@@ -1,8 +1,260 @@
+html {
+  font-family: "BPG Ingiri Arial", sans-serif;
 
-.material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 48
+  --shadow-small: 0 2px 5px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --border-radius-small: 0.5rem;
+  --border-radius-medium: 1rem;
+  --border-radius-big: 1.5rem;
+}
+
+body {
+  margin: 0;
+  background-color: rgb(239, 245, 250);
+}
+
+main {
+  width: 90%;
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+section {
+  margin: 0 auto;
+  width: max-content;
+  max-width: 100%;
+}
+
+select,
+input,
+option {
+  font-family: inherit;
+  color: rgb(34, 34, 34);
+}
+
+#controll-field {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+#back-btn {
+  font-size: 1rem;
+}
+
+#form-field form {
+  box-shadow: var(--shadow-small);
+  border-radius: var(--border-radius-big);
+  padding: var(--space-6);
+  background-color: rgb(255, 255, 255);
+  margin: var(--space-6) auto;
+  color: rgb(34, 34, 34);
+}
+
+#form-field form p {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--space-6) 0;
+}
+
+.response-text {
+  text-align: center;
+  color: #2a474e;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+#form-field button {
+  font-size: 1rem;
+  background-color: #2a474e;
+  font-weight: bold;
+  border-radius: var(--border-radius-medium);
+  border: 1px solid #3f6a75;
+  color: white;
+}
+
+#form-field select,
+#form-field input {
+  border-radius: var(--border-radius-small);
+  margin-left: var(--space-2);
+  padding: var(--space-1);
+}
+
+#form-field input {
+  border: 1px solid rgb(118, 118, 118);
+}
+
+#form-field select:hover,
+#form-field input:hover,
+#form-field select:active,
+#form-field input:active {
+  cursor: pointer;
+  border-color: #3ab2cf;
+}
+
+#result-field {
+  max-width: fit-content;
+  font-size: x-small;
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+#result-field table {
+  border-spacing: 0;
+  border: 1px solid #ddd;
+  box-shadow: var(--shadow-small);
+  text-align: center;
+}
+
+#result-field th {
+  background-color: #31bddf;
+  text-align: center;
+  padding: var(--space-2);
+}
+
+#icon-column {
+  background-color: transparent;
+  border: none;
+}
+
+#result-field td {
+  padding: var(--space-1);
+}
+
+#result-field tr:hover {
+ transform: scale(1.1);
+ transition-duration: 500ms;
+}
+
+#result-field tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+#result-field tr:nth-child(odd) {
+  background-color: #d9dcdd;
+}
+
+#result-field i {
+  display: inline;
+  margin: var(--space-1);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#free-rooms {
+  list-style-type: none;
+  text-align: center;
+  padding: 0;
+}
+#free-rooms li {
+  width: 50px;
+  height: 50px;
+  background-color: #31bddf;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: var(--border-radius-small);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: var(--space-2);
+}
+
+#free-rooms li:hover {
+  box-shadow: var(--shadow-medium);
+  background-color: #3ab2cf;
+  cursor: pointer;
+}
+
+#free-rooms p {
+  padding: 0;
+  margin: 0;
+  color: #2a474e;
+}
+
+.error-message {
+  display: block;
+  text-align: center;
+  color: #af4921;
+  background-color: rgb(250, 236, 234);
+  font-size: 1rem;
+  padding: var(--space-2);
+  font-weight: bold;
+  border-radius: var(--border-radius-medium);
+}
+
+.main-controll {
+  display: flex;
+  flex-direction: column;
+  margin-top: 35%;
+}
+
+.nav-look {
+  margin: 16px 0;
+  font-size: 1.75rem;
+}
+
+.btn {
+  background-color: #31bddf;
+  font-weight: bold;
+  border-radius: var(--border-radius-medium);
+  border: 1px solid #31bddf;
+  color: white;
+  cursor: pointer;
+  padding: var(--space-2);
+  font-family: inherit;
+}
+
+.btn-main {
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  width: 100%;
+  margin: 1rem auto;
+  border-radius: var(--border-radius-big);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover,
+.btn:active {
+  background-color: #3ab2cf;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.success-controll {
+  margin: auto;
+}
+
+.fa-circle-check {
+  color: green;
+  display: block;
+  font-size: 6rem;
+}
+
+@media (min-width: 48rem) {
+  main {
+    font-size: 1.5rem;
+  }
+  select,
+  input,
+  option {
+    font: inherit;
+  }
+  #back-btn {
+    font-size: 1.5rem;
+  }
+
+  #result-field {
+    font-size: 1rem;
+  }
+
+  #form-field select,
+  #form-field input {
+    border-radius: var(--border-radius-medium);
+  }
 }

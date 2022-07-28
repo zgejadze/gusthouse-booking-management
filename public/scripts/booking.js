@@ -1,8 +1,12 @@
 const searchBtn = document.getElementById("search-btn");
 const bookingBtn = document.getElementById("new-booking-btn");
-const backBtn = document.createElement("button");
+const backBtn = document.getElementById("back-btn");
+
+backBtn.classList.add("btn");
+backBtn.style.display = "none";
 
 const formFieldSectionElement = document.getElementById("form-field");
+const controlFieldSectionElement = document.getElementById("controll-field");
 const resultFieldElement = document.getElementById("result-field");
 
 const roomNumbers = [
@@ -22,12 +26,15 @@ const roomNumbers = [
 
 ////////////// back button ///////////////////
 function goToLandingPage(event) {
-  event.target.remove();
-  resultFieldElement.innerHTML = "";
+  event.target.style.display = "none";
   formFieldSectionElement.innerHTML = "";
   resultFieldElement.innerHTML = "";
   searchBtn.style.display = "inline-block";
   searchBtn.nextElementSibling.style.display = "inline-block";
+
+  controlFieldSectionElement.classList.add("main-controll");
+  controlFieldSectionElement.classList.remove("nav-look");
+  controlFieldSectionElement.classList.remove("success-controll");
 }
 
 function hideControllBtns() {
@@ -35,10 +42,10 @@ function hideControllBtns() {
   searchBtn.style.display = "none";
 }
 
-function createBackBtn(parrentElement) {
-  backBtn.textContent = "უკან";
-  backBtn.id = "back-btn";
-  parrentElement.appendChild(backBtn);
+function createBackBtn() {
+  backBtn.style.display = "block";
+  controlFieldSectionElement.classList.add("nav-look");
+
   backBtn.addEventListener("click", goToLandingPage);
 }
 /////////////////////////////////////////
@@ -69,8 +76,10 @@ function loadSearchView(event) {
         <input type="date" name="date-end" id="date-end" required>
 
     </p>
-    <button>ძებნა</button>
+    <hr>
+    <button class="btn">ძებნა <i class="fa-solid fa-magnifying-glass"></i></button>
     </form>`;
+  controlFieldSectionElement.classList.remove("main-controll");
 
   const roomNumberSelectElement = document.getElementById("room-number");
   for (const room of roomNumbers) {
@@ -93,7 +102,7 @@ function loadSearchView(event) {
 
   hideControllBtns();
 
-  createBackBtn(searchBtn.parentElement);
+  createBackBtn();
   formFieldSectionElement.firstElementChild.addEventListener(
     "submit",
     loadBookedRooms
@@ -146,12 +155,6 @@ async function loadBookedRooms(event) {
     };
   }
 
-  // session storage need working on
-  if (sessionStorage.dates || !sessionStorage.dates === null) {
-    enteredData = JSON.parse(sessionStorage.dates);
-    sessionStorage.clear();
-  }
-
   let response;
   try {
     response = await fetch("/getBookedRooms", {
@@ -173,7 +176,7 @@ async function loadBookedRooms(event) {
 
   const bookedRooms = await response.json();
   if (!bookedRooms.bookings || bookedRooms.bookings.length === 0) {
-    alert("no bookings, needs work");
+    alert("მითითებულ თარიღებში ჯავშანი არაა!!");
     resultFieldElement.innerHTML = "";
     return;
   }
@@ -182,7 +185,7 @@ async function loadBookedRooms(event) {
   <table id="result-table">
   <thead>
   <tr id="table-header">
-    <th onclick="sortTable(0)">ჯავშნის დასახელება</th>
+    <th onclick="sortTable(0)">ჯავშნის სახელი</th>
     <th onclick="sortTable(1)">ჯავშნის წყარო</th>
     <th onclick="sortTable(2)">ოთახის ნომერი</th>
     <th onclick="sortTable(3, true)">თარიღი დან</th>
@@ -255,16 +258,14 @@ async function deleteBooking(event) {
 }
 
 async function loadBookingEditForm(event) {
-
-
   const bookingId = event.target.dataset.bookingid;
   const response = await fetch("booking/" + bookingId);
   const responseData = await response.json();
-  const valuesArray = Object.values(responseData.booking)
+  const valuesArray = Object.values(responseData.booking);
 
   const sourceInputElement = document.createElement("p");
   sourceInputElement.innerHTML = `
-    <label for="booking-name">ჯავშნის დასახელება</label>
+    <label for="booking-name">ჯავშნის სახელი</label>
     <input
       type="text"
       id="booking-name"
@@ -280,23 +281,25 @@ async function loadBookingEditForm(event) {
   const selectInputs = document.querySelectorAll("#form-field select");
   for (const selectinput of selectInputs) {
     for (const option of selectinput) {
-      if(valuesArray.includes(option.value)){
-        option.selected = 'selected'
-      };
+      if (valuesArray.includes(option.value)) {
+        option.selected = "selected";
+      }
     }
   }
-  document.querySelector('#booking-name').value = responseData.booking.name
-  document.querySelector('#date-start').value = responseData.booking.startDate.substring(0, 10)
-  document.querySelector('#date-end').value = responseData.booking.endDate.substring(0, 10)
+  document.querySelector("#booking-name").value = responseData.booking.name;
+  document.querySelector("#date-start").value =
+    responseData.booking.startDate.substring(0, 10);
+  document.querySelector("#date-end").value =
+    responseData.booking.endDate.substring(0, 10);
 
-  formField.lastElementChild.textContent = 'შენახვა'
-  formField.removeEventListener('submit', loadBookedRooms)
-  formField.dataset.bookingid = bookingId
-  formField.addEventListener('submit', saveUpdatedBooking)
-  resultFieldElement.innerHTML = ''
+  formField.lastElementChild.textContent = "შენახვა";
+  formField.removeEventListener("submit", loadBookedRooms);
+  formField.dataset.bookingid = bookingId;
+  formField.addEventListener("submit", saveUpdatedBooking);
+  resultFieldElement.innerHTML = "";
 }
 
-async function saveUpdatedBooking(event){
+async function saveUpdatedBooking(event) {
   event.preventDefault();
   const submitData = {
     name: document.getElementById("booking-name").value,
@@ -308,7 +311,7 @@ async function saveUpdatedBooking(event){
 
   let response;
   try {
-    response = await fetch("/bookings/"+ event.target.dataset.bookingid, {
+    response = await fetch("/bookings/" + event.target.dataset.bookingid, {
       method: "PATCH",
       body: JSON.stringify(submitData),
       headers: {
@@ -431,13 +434,14 @@ function loadBookingFirstForm() {
     <input type="date" name="date-start" id="date-start" required>
     <input type="date" name="date-end" id="date-end" required>
   </p>
-  <button>ძებნა</button>
+  <hr>
+  <button class="btn">ძებნა <i class="fa-solid fa-magnifying-glass"></i></button>
 </form>
 `;
 
   hideControllBtns();
 
-  createBackBtn(bookingBtn.parentElement);
+  createBackBtn();
 
   formFieldSectionElement.firstElementChild.addEventListener(
     "submit",
@@ -497,19 +501,23 @@ async function getFreeRooms(event) {
   }
 
   const responseData = await response.json();
-  if (!responseData.status) {
-    if (!document.getElementById("error-message")) {
+
+  let errorMessageElement = document.createElement("p");
+  errorMessageElement.classList.add("error-message");
+  if (!responseData.status && !Array.isArray(responseData)) {
+    if(formFieldSectionElement.firstElementChild !== document.querySelector('#form-field .error-message')){
       formFieldSectionElement.insertBefore(
-        document.createElement("p"),
+        errorMessageElement,
         formFieldSectionElement.firstChild
       );
-      formFieldSectionElement.firstElementChild.id = "error-message";
     }
     formFieldSectionElement.firstElementChild.textContent =
       responseData.message;
     resultFieldElement.innerHTML = "";
-  } else if (responseData.status === true) {
-    document.getElementById("error-message").remove();
+  } else if (responseData.status === true || Array.isArray(responseData) || responseData.status === "notFree") {
+    if(document.querySelector('#form-field .error-message')){
+      document.querySelector('#form-field .error-message').remove()
+    }
   }
 
   //// list of free rooms for selected period
@@ -520,6 +528,7 @@ async function getFreeRooms(event) {
       document.getElementById("error-message").remove();
     }
     resultFieldElement.appendChild(document.createElement("p"));
+    resultFieldElement.firstElementChild.classList.add("response-text");
     resultFieldElement.firstElementChild.textContent = responseData.message;
   }
 }
@@ -557,7 +566,7 @@ function startBookingOnThisRoom(event) {
 
   formFieldSectionElement.innerHTML = `<form>
     <p>
-    <label for="booking-name">ჯავშნის დასახელება</label>
+    <label for="booking-name">ჯავშნის სახელი</label>
     <input
       type="text"
       id="booking-name"
@@ -585,7 +594,8 @@ function startBookingOnThisRoom(event) {
         <input type="date" value=${dates.startDate} name="date-start" id="date-start" required>
         <input type="date" value=${dates.endDate} name="date-end" id="date-end" required>
       </p>
-      <button>დაჯავშნა</button>
+      <hr>
+      <button class="btn">დაჯავშნა</button>
     </form>`;
 
   const roomNumberSelectElement = document.getElementById("room-number");
@@ -645,8 +655,10 @@ function bookingResponse(message, status) {
   if (status) {
     formFieldSectionElement.innerHTML = "";
     formFieldSectionElement.appendChild(document.createElement("p"));
-    formFieldSectionElement.firstElementChild.textContent = message;
+    formFieldSectionElement.firstElementChild.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${message}`;
+    formFieldSectionElement.firstElementChild.classList.add("response-text");
     bookingBtn.style.display = "inline-block";
+    controlFieldSectionElement.classList.add("success-controll");
     backBtn.removeEventListener("click", loadBookingFirstForm);
     backBtn.addEventListener("click", goToLandingPage);
   } else {
@@ -657,6 +669,7 @@ function bookingResponse(message, status) {
       );
       formFieldSectionElement.firstElementChild.id = "error-message";
     }
+    formFieldSectionElement.firstElementChild.classList.add('error-message')
     formFieldSectionElement.firstElementChild.textContent = message;
   }
 }
