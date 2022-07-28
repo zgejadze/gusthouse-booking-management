@@ -51,6 +51,9 @@ function createBackBtn() {
 /////////////////////////////////////////
 ////////// search tab ///////////////////
 /////////////////////////////////////////
+searchBtn.addEventListener("click", loadSearchView);
+
+
 function loadSearchView(event) {
   formFieldSectionElement.innerHTML = `<form>
     <p>
@@ -96,7 +99,6 @@ function loadSearchView(event) {
     const dates = JSON.parse(sessionStorage.dates);
     document.getElementById("date-start").value = dates.startDate;
     document.getElementById("date-end").value = dates.endDate;
-    getFreeRooms();
     sessionStorage.clear();
   }
 
@@ -421,7 +423,6 @@ function sortTable(n, typeDate = false) {
   }
 }
 
-searchBtn.addEventListener("click", loadSearchView);
 
 //////////////////////////////////////////
 ///////// open booking form //////////////
