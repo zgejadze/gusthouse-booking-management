@@ -76,7 +76,7 @@ function everyThingIsValid(name, source, room, startDate, endDate) {
   ) {
     const validationData = {
       status: true,
-      message: "ჯავშანი წარმატებიტ დარეგისტრირდა",
+      message: "ჯავშანი წარმატებით დარეგისტრირდა",
     };
     return validationData;
   } else {

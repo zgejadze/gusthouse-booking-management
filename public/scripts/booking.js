@@ -177,8 +177,11 @@ async function loadBookedRooms(event) {
 
   const bookedRooms = await response.json();
   if (!bookedRooms.bookings || bookedRooms.bookings.length === 0) {
-    alert("მითითებულ თარიღებში ჯავშანი არაა!!");
     resultFieldElement.innerHTML = "";
+    let errorMessageElement = document.createElement("p");
+    errorMessageElement.classList.add("error-message");
+    errorMessageElement.textContent = "მითითებულ თარიღებში ჯავშანი არაა!!";
+    resultFieldElement.appendChild(errorMessageElement);
     return;
   }
 
@@ -438,16 +441,14 @@ function sortTable(n, typeDate = false) {
     header.firstElementChild.lastElementChild.classList.add("fa-sort-down");
   }
 
-  for(i = 0; i < rows[0].getElementsByTagName("TH").length - 1; i++){
-    if(i===n){
-      continue
+  for (i = 0; i < rows[0].getElementsByTagName("TH").length - 1; i++) {
+    if (i === n) {
+      continue;
     }
-    const IconElement = rows[0].getElementsByTagName("TH")[i].firstElementChild.lastElementChild
-    IconElement.classList.remove(
-      "fa-sort-up",
-      "fa-sort-down"
-    )
-    IconElement.classList.add('fa-sort')
+    const IconElement =
+      rows[0].getElementsByTagName("TH")[i].firstElementChild.lastElementChild;
+    IconElement.classList.remove("fa-sort-up", "fa-sort-down");
+    IconElement.classList.add("fa-sort");
   }
 }
 
