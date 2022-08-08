@@ -26,7 +26,7 @@ const roomNumbers = [
 
 ////////////// back button ///////////////////
 function goToLandingPage(event) {
-  event.target.style.display = "none";
+  backBtn.style.display = "none";
   formFieldSectionElement.innerHTML = "";
   resultFieldElement.innerHTML = "";
   searchBtn.style.display = "inline-block";
