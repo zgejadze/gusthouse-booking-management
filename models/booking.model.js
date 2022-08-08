@@ -71,14 +71,14 @@ class Booking {
       $or: [
         {
           startDate: {
-            $gt: startDate,
-            $lt: endDate,
+            $gte: startDate,
+            $lte: endDate,
           },
         },
         {
           endDate: {
-            $gt: startDate,
-            $lt: endDate,
+            $gte: startDate,
+            $lte: endDate,
           },
         },
         {
@@ -106,14 +106,14 @@ class Booking {
       $or: [
         {
           startDate: {
-            $gt: startDate,
-            $lt: endDate,
+            $gte: startDate,
+            $lte: endDate,
           },
         },
         {
           endDate: {
-            $gt: startDate,
-            $lt: endDate,
+            $gte: startDate,
+            $lte: endDate,
           },
         },
         {
@@ -132,14 +132,14 @@ class Booking {
         $or: [
           {
             startDate: {
-              $gt: startDate,
-              $lt: endDate,
+              $gte: startDate,
+              $lte: endDate,
             },
           },
           {
             endDate: {
-              $gt: startDate,
-              $lt: endDate,
+              $gte: startDate,
+              $lte: endDate,
             },
           },
           {
