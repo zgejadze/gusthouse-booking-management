@@ -53,7 +53,6 @@ function createBackBtn() {
 /////////////////////////////////////////
 searchBtn.addEventListener("click", loadSearchView);
 
-
 function loadSearchView(event) {
   formFieldSectionElement.innerHTML = `<form>
     <p>
@@ -187,11 +186,11 @@ async function loadBookedRooms(event) {
   <table id="result-table">
   <thead>
   <tr id="table-header">
-    <th onclick="sortTable(0)">ჯავშნის სახელი</th>
-    <th onclick="sortTable(1)">ჯავშნის წყარო</th>
-    <th onclick="sortTable(2)">ოთახის ნომერი</th>
-    <th onclick="sortTable(3, true)">თარიღი დან</th>
-    <th onclick="sortTable(4, true)">თარიღი მდე</th>
+    <th onclick="sortTable(0)"><div><p>ჯავშნის სახელი</p> <i class="fa-solid fa-sort"></i></div></th>
+    <th onclick="sortTable(1)"><div><p>ჯავშნის წყარო</p> <i class="fa-solid fa-sort"></i></div></th>
+    <th onclick="sortTable(2)"><div><p>ოთახის ნომერი</p> <i class="fa-solid fa-sort"></i></div></th>
+    <th onclick="sortTable(3, true)"><div><p>თარიღი დან</p> <i class="fa-solid fa-sort"></i></div></th>
+    <th onclick="sortTable(4, true)"><div><p>თარიღი მდე</p> <i class="fa-solid fa-sort"></i></div></th>
     <th id="icon-column"></th>
   </tr>
   </thead>
@@ -338,6 +337,7 @@ async function saveUpdatedBooking(event) {
 ///////////////////////////////////////////
 function sortTable(n, typeDate = false) {
   var table,
+    header,
     rows,
     switching,
     i,
@@ -421,8 +421,35 @@ function sortTable(n, typeDate = false) {
       }
     }
   }
-}
+  header = rows[0].getElementsByTagName("TH")[n];
 
+  // adds sorting symbol
+  if (dir === "asc") {
+    header.firstElementChild.lastElementChild.classList.remove(
+      "fa-sort-down",
+      "fa-sort"
+    );
+    header.firstElementChild.lastElementChild.classList.add("fa-sort-up");
+  } else if (dir === "desc") {
+    header.firstElementChild.lastElementChild.classList.remove(
+      "fa-sort-up",
+      "fa-sort"
+    );
+    header.firstElementChild.lastElementChild.classList.add("fa-sort-down");
+  }
+
+  for(i = 0; i < rows[0].getElementsByTagName("TH").length - 1; i++){
+    if(i===n){
+      continue
+    }
+    const IconElement = rows[0].getElementsByTagName("TH")[i].firstElementChild.lastElementChild
+    IconElement.classList.remove(
+      "fa-sort-up",
+      "fa-sort-down"
+    )
+    IconElement.classList.add('fa-sort')
+  }
+}
 
 //////////////////////////////////////////
 ///////// open booking form //////////////
@@ -506,7 +533,10 @@ async function getFreeRooms(event) {
   let errorMessageElement = document.createElement("p");
   errorMessageElement.classList.add("error-message");
   if (!responseData.status && !Array.isArray(responseData)) {
-    if(formFieldSectionElement.firstElementChild !== document.querySelector('#form-field .error-message')){
+    if (
+      formFieldSectionElement.firstElementChild !==
+      document.querySelector("#form-field .error-message")
+    ) {
       formFieldSectionElement.insertBefore(
         errorMessageElement,
         formFieldSectionElement.firstChild
@@ -515,9 +545,13 @@ async function getFreeRooms(event) {
     formFieldSectionElement.firstElementChild.textContent =
       responseData.message;
     resultFieldElement.innerHTML = "";
-  } else if (responseData.status === true || Array.isArray(responseData) || responseData.status === "notFree") {
-    if(document.querySelector('#form-field .error-message')){
-      document.querySelector('#form-field .error-message').remove()
+  } else if (
+    responseData.status === true ||
+    Array.isArray(responseData) ||
+    responseData.status === "notFree"
+  ) {
+    if (document.querySelector("#form-field .error-message")) {
+      document.querySelector("#form-field .error-message").remove();
     }
   }
 
@@ -670,7 +704,7 @@ function bookingResponse(message, status) {
       );
       formFieldSectionElement.firstElementChild.id = "error-message";
     }
-    formFieldSectionElement.firstElementChild.classList.add('error-message')
+    formFieldSectionElement.firstElementChild.classList.add("error-message");
     formFieldSectionElement.firstElementChild.textContent = message;
   }
 }

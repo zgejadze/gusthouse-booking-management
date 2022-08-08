@@ -118,20 +118,35 @@ option {
   text-align: center;
   padding: var(--space-2);
 }
+#result-field th div{
+  display: flex;
+  align-items: center;
+  column-gap: 5px
+}
 
 #icon-column {
   background-color: transparent;
   border: none;
 }
 
+
 #result-field td {
   padding: var(--space-1);
 }
 
-#result-field tr:hover {
+#result-field th:hover {
+  cursor: pointer;
+}
+
+#result-field tbody tr:hover {
  transform: scale(1.1);
  transition-duration: 500ms;
 }
+
+#result-field #icon-column:hover {
+  cursor: default;                  
+}
+
 
 #result-field tr:nth-child(even) {
   background-color: #ffffff;
@@ -141,7 +156,7 @@ option {
   background-color: #d9dcdd;
 }
 
-#result-field i {
+#result-field tbody i {
   display: inline;
   margin: var(--space-1);
   font-size: 1rem;
