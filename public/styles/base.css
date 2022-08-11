@@ -127,7 +127,8 @@ option {
 #result-field th div{
   display: flex;
   align-items: center;
-  column-gap: 5px
+  column-gap: 5px;
+  justify-content: center
 }
 
 #icon-column {
