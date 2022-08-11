@@ -199,6 +199,7 @@ async function loadBookedRooms(event) {
   </thead>
   <tbody></tbody>
   </table>
+  <button class="btn" onclick="ExportToExcel('xlsx')">გადმოწერა Excel-ში</button>
   `;
   createResultTable(bookedRooms.bookings);
 }
@@ -248,17 +249,31 @@ function createResultTable(bookingsArray) {
 // edit and delete booking functions  //
 ////////////////////////////////////////
 
-async function deleteBooking(event) {
-  const bookingId = event.target.dataset.bookingid;
+function deleteBooking(event) {
+  swal
+    .fire({
+      title: "დარწმუნრბული ხარ?",
+      text: "აღნიშნული ჯავშანი სამუდამოდ წაიშლება!",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonText: "გაუქმება",
+      confirmButtonText: "წაშლა",
+      confirmButtonColor: "#d33"
+    })
+    .then(async function (value) {
+      if (value.isConfirmed) {
+        const bookingId = event.target.dataset.bookingid;
 
-  const response = await fetch("/bookings/" + bookingId, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    alert("something went wrong");
-    return;
-  }
-  loadBookedRooms();
+        const response = await fetch("/bookings/" + bookingId, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          alert("something went wrong");
+          return;
+        }
+        loadBookedRooms();
+      }
+    });
 }
 
 async function loadBookingEditForm(event) {
@@ -450,6 +465,18 @@ function sortTable(n, typeDate = false) {
     IconElement.classList.remove("fa-sort-up", "fa-sort-down");
     IconElement.classList.add("fa-sort");
   }
+}
+
+/////////////////////////////////////
+/// export to excell///
+/////////////////////////////////////
+
+function ExportToExcel(type, fn, dl) {
+  var elt = document.getElementById("result-table");
+  var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+  return dl
+    ? XLSX.write(wb, { bookType: type, bookSST: true, type: "base64" })
+    : XLSX.writeFile(wb, fn || "MySheetName." + (type || "xlsx"));
 }
 
 //////////////////////////////////////////
